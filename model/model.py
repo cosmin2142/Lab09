@@ -1,6 +1,9 @@
 from database.parco_DAO import ParcoDAO
 from database.escursione_DAO import EscursioneDAO
 from database.punto_interesse_DAO import PuntoInteresseDAO
+from model import punto_interesse
+from model.escursione import Escursione
+
 
 class Model:
     def __init__(self):
@@ -38,7 +41,17 @@ class Model:
             --> Ogni Escursione ha un set di PuntoInteresse.
             --> Ogni PuntoInteresse ha un set di Escursioni.
         """
-        # TODO
+        relazioni=EscursioneDAO.get_escursioni_punti_interesse()
+        for relazione in relazioni:
+            id_escurione=relazione["id_escursione"]
+            id_punto_interesse=relazione["id_punto_interesse"]
+            if id_escurione in self.escursioni_map and id_punto_interesse in self.punti_interesse_map:
+                escursione=self.escursioni_map[id_escurione]
+                punto=self.punti_interesse_map[id_punto_interesse]
+                escursione.punti_interesse=set()
+                escursione.punti_interesse.add(punto)
+                punto.escursioni=set()
+                punto.escursioni.add(escursione)
 
     def genera_pacchetto(self, id_parco: str, max_giorni: int = None, max_budget: float = None):
         """
